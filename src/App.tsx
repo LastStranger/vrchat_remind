@@ -1,117 +1,115 @@
-import {useEffect, useState} from "react";
-import reactLogo from "./assets/react.svg";
-import {invoke} from "@tauri-apps/api/tauri";
-import "./App.css";
-import {createDir, BaseDirectory, writeTextFile, readTextFile, readBinaryFile} from '@tauri-apps/api/fs';
-import { isPermissionGranted, requestPermission, sendNotification } from '@tauri-apps/api/notification';
-import Logo from './logo.png';
-import HttpDemo from "./components/HttpDemo";
-import 'normalize.css';
-// import {getVersion} from "@tauri-apps/api/app";
+import React, { useEffect, useRef, useState } from "react";
+import request from "./utils/Request";
+import "./App.scss";
+import FriendLocation from "./components/FriendLocation";
+import { setLocCookies } from "./utils/operateCookies";
+import "normalize.css";
+import notify from "./utils/notification";
 
-function App() {
-    const [greetMsg, setGreetMsg] = useState("");
-    const [name, setName] = useState("");
-    const [version, setVersion] = useState("");
-    const [contents, setContents] = useState('');
-    const [img, setImg] = useState<any>("");
+const App = () => {
+    const [onlineUserList, setOnlineUser] = useState<any>([]); // 在线用户列表
+    const [likedPerson, setLikedPerson] = useState("");
+    const [confirmedPerson, setConfirmedPerson] = useState("");
+    const [cookies, setCookies] = useState("");
+    const timeRef = useRef<any>(null);
+    const notifiedRef = useRef(false); // 如果通知过一次后不再通知
 
+    useEffect(() => {
+        handleRequest();
+        timeRef.current = setInterval(() => {
+            handleRequest();
+        }, 60000);
+        // }, 10000)
+    }, []);
 
-    return <HttpDemo />
+    useEffect(() => {
+        if (confirmedPerson) {
+            clearInterval(timeRef.current);
+            handleRequest();
+            timeRef.current = setInterval(() => {
+                handleRequest();
+            }, 60000);
+            // }, 10000)
+        }
+    }, [confirmedPerson]);
 
-    // useEffect(() => {
-        // createDir('users', { dir: BaseDirectory.Desktop, recursive: true }).then(async res => {
-        //     console.log(res);
-        //     const contents = await readTextFile('users/test', { dir: BaseDirectory.Desktop });
-        //     setContents(contents);
-        // });
-        // setNotification();
-        // sendNotification('Tauri is awesome!');
-        // sendNotification({ title: 'TAURI', body: 'Tauri is awesome!', icon: "icon.icns" });
-        // getImg();
+    const handleRequest = async () => {
+        try {
+            const data = await request("https://vrchat.com/api/1/auth/user/friends?offline=false&n=50&offset=0");
+            console.log(data);
+            setOnlineUser(data);
+            console.log("%clikedPerson", "color: #22E1FF; font-size: 16px", confirmedPerson);
+            const likeOnline = data.find((person: any) => person.displayName === confirmedPerson);
+            if (likeOnline && !notifiedRef.current) {
+                await notify({
+                    title: "通知",
+                    body: `${likeOnline.displayName}已上线`,
+                });
+                notifiedRef.current = true;
+            }
+        } catch (e) {
+            notify({ title: "通知", body: `cookies貌似过期了,请更新cookie` });
+        }
+    };
 
-    // }, [])
-
-    // const setNotification = async () => {
-    //     let permissionGranted = await isPermissionGranted();
-    //     if (!permissionGranted) {
-    //         const permission = await requestPermission();
-    //         permissionGranted = permission === 'granted';
-    //     }
-    //     if (permissionGranted) {
-    //         // sendNotification('Tauri is awesome!');
-    //         sendNotification({ title: 'TAURI', body: 'Tauri is awesome!' });
-    //     }
-    // }
-
-    // const getImg = async () => {
-    //     const res = await readBinaryFile('users/123.jpg', { dir: BaseDirectory.Desktop });
-    //     console.log(res);
-    //     const image = URL.createObjectURL(
-    //         new Blob([res.buffer], { type: 'image/png' } /* (1) */)
-    //     );
-    //     setImg(image);
-    // }
-    // async function greet() {
-    //     // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-    //     setGreetMsg(await invoke("greet", {name}));
-    // }
-
-    // const handleGetVersion = async () => {
-    //     // const res = await getVersion();
-    //     const res:any = await invoke("get_version", {name})
-    //     setVersion(res);
-    // }
-    //
-    // const handleSayName = async () => {
-    //     const res = await invoke("say_my_name", {name})
-    //     console.log(res);
-    // }
-
-    // const handleWriteInFile = async () => {
-    //     const res = await writeTextFile('users/test', name, { dir: BaseDirectory.Desktop });
-    //     console.log(res);
-    // }
-
-    // return (
-    //     <div className="container">
-    //         <HttpDemo />
-    //         <h2>contents: {contents}</h2>
-    //
-    //         <div className="row">
-    //             <a href="https://vitejs.dev" target="_blank">
-    //                 <img src="/vite.svg" className="logo vite" alt="Vite logo"/>
-    //             </a>
-    //             <a href="https://tauri.app" target="_blank">
-    //                 <img src="/tauri.svg" className="logo tauri" alt="Tauri logo"/>
-    //             </a>
-    //             <a href="https://reactjs.org" target="_blank">
-    //                 <img src={reactLogo} className="logo react" alt="React logo"/>
-    //             </a>
-    //         </div>
-    //
-    //         <p>Click on the Tauri, Vite, and React logos to learn more.</p>
-    //
-    //         <div className="row">
-    //             <div>
-    //                 <input
-    //                     id="greet-input"
-    //                     onChange={(e) => setName(e.currentTarget.value)}
-    //                     placeholder="Enter a name..."
-    //                 />
-    //                 <button type="button" onClick={() => greet()}>
-    //                     Greet
-    //                 </button>
-    //                 {/*<button type="button" onClick={handleGetVersion}>version</button>*/}
-    //                 {/*<button type="button" onClick={handleSayName}>sayMyName</button>*/}
-    //                 <button type="button" onClick={handleWriteInFile}>writeInFile</button>
-    //             </div>
-    //         </div>
-    //         <p>{greetMsg}</p>
-    //         <p>{version}</p>
-    //         <img src={img} alt=""/>
-    //     </div>
-    // );
-}
+    const handleCookies = async () => {
+        const res = await setLocCookies(cookies);
+    };
+    return (
+        <div className="person-list">
+            <div className="operate-box">
+                <div className="name-box">
+                    <input
+                        type="text"
+                        placeholder="请填写好友的完整名字"
+                        value={likedPerson}
+                        onChange={e => {
+                            setLikedPerson(e.target.value);
+                        }}
+                    />
+                    <button
+                        onClick={() => {
+                            setLikedPerson("");
+                            setConfirmedPerson(likedPerson);
+                        }}
+                    >
+                        确认
+                    </button>
+                </div>
+                <div className="name-box">
+                    <input
+                        type="text"
+                        placeholder="请填写cookie"
+                        value={cookies}
+                        onChange={e => {
+                            setCookies(e.target.value);
+                        }}
+                    />
+                    <button onClick={handleCookies}>更新cookie</button>
+                </div>
+            </div>
+            <h2>当前上线好友数量:{onlineUserList.length}人</h2>
+            <h2>当前关注的好友:{confirmedPerson}</h2>
+            <div>
+                {onlineUserList.map((each: any) => (
+                    <div key={each.id} className="person">
+                        <div className="up-side">
+                            <img
+                                className="picture"
+                                src={each.profilePicOverride ? each.profilePicOverride : each.currentAvatarImageUrl}
+                                alt=""
+                            />
+                            <div className="right-side">
+                                <div className="name">{each.displayName}</div>
+                                <div className="status-Description">{each.statusDescription}</div>
+                            </div>
+                        </div>
+                        <FriendLocation worldKey={each.location} />
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+};
 
 export default App;

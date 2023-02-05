@@ -603,6 +603,11 @@ escape-string-regexp@^1.0.5:
   resolved "https://registry.yarnpkg.com/escape-string-regexp/-/escape-string-regexp-1.0.5.tgz#1b61c0562190a8dff6ae3bb2cf0200ca130b86d4"
   integrity sha512-vbRorB5FUQWvla16U8R/qgaFIya2qGzwDrNmCZuYKrbdSUMG6I1ZCGQRefkRVhuOkIGVne7BQ35DSfo1qvJqFg==
 
+eslint-config-lz@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/eslint-config-lz/-/eslint-config-lz-2.0.0.tgz#ce082513c29079c454885d172c1f1682ee41b0fa"
+  integrity sha512-JSAlwLeevT+eI0vMv1ygw/HTTGAyfIZHWieaalXmzH4r54a+36OWcZ0Qgxw2gVpnLYeLJJqElv3usIzgUEKO6g==
+
 fill-range@^7.0.1:
   version "7.0.1"
   resolved "https://registry.yarnpkg.com/fill-range/-/fill-range-7.0.1.tgz#1919a6a7c75fe38b2c7c77e5198535da9acdda40"

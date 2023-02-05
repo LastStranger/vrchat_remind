@@ -1,33 +1,30 @@
-import React, {useEffect, useMemo, useState} from 'react';
+import React, { useEffect, useMemo, useState } from "react";
 import request from "../../utils/Request";
-import './index.scss';
+import "./index.scss";
+import notify from "../../utils/notification";
 
-const Index = ({worldKey, onSendMessage}:any) => {
+const Index = ({ worldKey }: any) => {
     const [locationData, setLocationData] = useState<any>(null);
     const ifLocation = useMemo(() => {
         return worldKey !== "offline" && worldKey !== "private" && worldKey !== "traveling";
-    }, [worldKey])
+    }, [worldKey]);
 
     useEffect(() => {
-        if(ifLocation) {
-            request(`https://vrchat.com/api/1/worlds/${worldKey.split(':')[0]}`).then(res => {
-                console.log('%cres', "color: #22E1FF; font-size: 16px", res);
+        if (ifLocation) {
+            request(`https://vrchat.com/api/1/worlds/${worldKey.split(":")[0]}`).then(res => {
                 setLocationData(res);
-                if(/(just H|MMD|Language)/.test(res.name)){
-                // if(res.name.includes("just H")){
-                    onSendMessage("有好友正在公开房开银趴");
+                if (/(just H|Shangri-La)/.test(res.name)) {
+                    notify({ body: "有好友正在公开房开银趴" });
                 }
-            })
+            });
         }
-        // https://vrchat.com/api/1/worlds/wrld_791ebf58-54ce-4d3a-a0a0-39f10e1b20b2
+    }, [worldKey]);
 
-    }, [worldKey])
-
-    if(!ifLocation) return null;
+    if (!ifLocation) return null;
 
     return (
         <div className="friend-location">
-            <img className="location-pic" src={locationData?.imageUrl} alt=""/>
+            <img className="location-pic" src={locationData?.imageUrl} alt="" />
             <div className="location-name">{locationData?.name}</div>
         </div>
     );
