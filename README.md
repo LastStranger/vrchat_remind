@@ -1,6 +1,6 @@
 # vrchat_remind
 vrchat关注好友上线提醒,支持mac系统,现在也支持window系统了，
-###安装方法
+### 安装方法
 Windows下载旁边的release的msi文件，安装完成即可得到exe运行文件，双击运行即可。
 mac下载安装即可食用。
 ### 食用方法
