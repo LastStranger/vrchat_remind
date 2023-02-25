@@ -1,56 +1,79 @@
-// use std::borrow::Cow;
+// #![cfg_attr(
+// all(not(debug_assertions), target_os = "windows"),
+// windows_subsystem = "windows"
+// )]
 //
-// use futures::FutureExt;
-// use mimalloc::MiMalloc;
-// use unm_test_utils::{measure_async_function_time, set_logger};
-// use unm_types::{Artist, ContextBuilder, SearchMode, Song};
+// // use std::task::Context;
+// // use rand::prelude::*;
+// // use std::fmt::Debug;
+// // use unm_api_utils::executor::build_full_executor;
+// // use unm_engine::executor::Executor;
+// // use unm_engine_bilibili::{BilibiliEngine, ENGINE_ID as BILIBILI_ENGINE_ID};
+// // use unm_types::{Song, Artist, Context};
+// use std::collections::HashMap;
 //
-// #[global_allocator]
-// static GLOBAL: MiMalloc = MiMalloc;
+// // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
+// // #[tauri::command]
+// // fn request() -> Result<(), Box<dyn std::error::Error>> {
+// //     let resp = reqwest::blocking::get("https://httpbin.org/ip")?
+// //         .json::<HashMap<String, String>>()?;
+// //     println!("{:#?}", resp);
+// //     Ok(())
+// // }
+// // #[tauri::command]
+// // async fn get_song_result() -> String {
+// //     // let mut executor = Executor::new();
+// //     // executor.register(BILIBILI_ENGINE_ID, BilibiliEngine::new());
+// //
+// // // 您也可以直接使用官方預設的引擎集，免去手動註冊的麻煩。
+// // // 首先得引入 `unm_api_utils`，然後就可以：
+// //
+// //     // use unm_api_utils::executor::build_full_executor;
+// //     let executor = build_full_executor();
+// //     let context = Context::default();
+// //
+// //     let search_result = executor.search(&[BILIBILI_ENGINE_ID], &Song {
+// //         id: "".to_string(),
+// //         name: "TT".to_string(),
+// //         artists: vec![
+// //             Artist {
+// //                 id: "".to_string(),
+// //                 name: "Twice".to_string(),
+// //             }
+// //         ],
+// //     }, &context).await?;
+// //
+// //     let result = executor.retrieve(&search_result, &context).await?;
+// //     println!("{:?}", result);
+// //     "hello".to_string()
+// // }
 //
-// #[tokio::main]
-// async fn main() {
-//     set_logger();
-//
-//     let song = Song::builder()
-//         .name("青花瓷".to_string())
-//         .artists(vec![Artist::builder().name("周杰伦".to_string()).build()])
-//         .build();
-//
-//     let context = ContextBuilder::default()
-//         .enable_flac(std::env::var("ENABLE_FLAC").unwrap_or_else(|_| "".into()) == "true")
-//         .search_mode(match std::env::var("SEARCH_MODE") {
-//             Ok(v) if v == "fast_first" => SearchMode::FastFirst,
-//             Ok(v) if v == "order_first" => SearchMode::OrderFirst,
-//             _ => SearchMode::FastFirst,
-//         })
-//         .build()
-//         .unwrap();
-//
-//     let executor = unm_api_utils::executor::build_full_executor();
-//     let engines_to_use = std::env::var("ENGINES")
-//         .unwrap_or_else(|_| executor.list().join(" "))
-//         .split_whitespace()
-//         .map(|v| Cow::Owned(v.to_string()))
-//         .collect::<Vec<Cow<'static, str>>>();
-//
-//     let (search_time_taken, search_result) =
-//         measure_async_function_time(|| executor.search(&engines_to_use, &song, &context).boxed())
-//             .await;
-//     let search_result = search_result.expect("should has a search result");
-//
-//     let (retrieve_time_taken, retrieved_result) =
-//         measure_async_function_time(|| executor.retrieve(&search_result, &context).boxed()).await;
-//     let retrieved_result = retrieved_result.expect("can't be retrieved");
-//
-//     println!(
-//         "[Retrieved] 周杰伦 - 青花瓷: {} (from {})",
-//         retrieved_result.url, retrieved_result.source
-//     );
-//     println!(
-//         "Search taken {:?} while retrieve tooke {:?}.",
-//         search_time_taken, retrieve_time_taken
-//     );
+// #[tauri::command]
+// fn greet(name: &str) -> String {
+//     // let x: i8 = random();
+//     // x.to_string();
+//     // let combine = format!("name is: {}, random Number is: {}", name, x);
+//     // let combine = format!("Hello, {}! your age is {}", name, x);
+//     // let combine = name + &x;
+//     // println!("{}", x);
+//     // combine
+//     format!("Hello, {}! You've been greeted from Rust!", name)
 // }
 //
-// // pub mod
+// #[tauri::command]
+// fn get_version() -> String {
+//     format!("hahav{}", env!("CARGO_PKG_VERSION"))
+// }
+//
+// #[tauri::command]
+// fn say_my_name(name: String) -> String {
+//     println!("Say my name: {}", name);
+//     "ok".into()
+// }
+//
+// fn main() {
+//     tauri::Builder::default()
+//         .invoke_handler(tauri::generate_handler![greet, get_version, say_my_name])
+//         .run(tauri::generate_context!())
+//         .expect("error while running tauri application");
+// }

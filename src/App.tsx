@@ -5,31 +5,35 @@ import FriendLocation from "./components/FriendLocation";
 import { setLocCookies } from "./utils/operateCookies";
 import "normalize.css";
 import notify from "./utils/notification";
+import { getNames, saveName } from "./utils/storeName";
 
 const App = () => {
-    const [onlineUserList, setOnlineUser] = useState<any>([]); // 在线用户列表
+    const [onlineUserList, setOnlineUserList] = useState<any>([]); // 在线用户列表
     const [likedPerson, setLikedPerson] = useState("");
     const [confirmedPerson, setConfirmedPerson] = useState("");
     const [cookies, setCookies] = useState("");
     const timeRef = useRef<any>(null);
     const notifiedRef = useRef(false); // 如果通知过一次后不再通知
 
-    useEffect(() => {
-        handleRequest();
+    const repeatRequest = async () => {
+        clearInterval(timeRef.current);
+        notifiedRef.current = false;
+        await handleRequest();
         timeRef.current = setInterval(() => {
             handleRequest();
         }, 60000);
         // }, 10000)
+    }
+
+    useEffect(() => {
+        getNames().then(res => {
+            setConfirmedPerson(res);
+        });
     }, []);
 
     useEffect(() => {
         if (confirmedPerson) {
-            clearInterval(timeRef.current);
-            handleRequest();
-            timeRef.current = setInterval(() => {
-                handleRequest();
-            }, 60000);
-            // }, 10000)
+            repeatRequest();
         }
     }, [confirmedPerson]);
 
@@ -37,7 +41,7 @@ const App = () => {
         try {
             const data = await request("https://vrchat.com/api/1/auth/user/friends?offline=false&n=50&offset=0");
             console.log(data);
-            setOnlineUser(data);
+            setOnlineUserList(data);
             console.log("%clikedPerson", "color: #22E1FF; font-size: 16px", confirmedPerson);
             const likeOnline = data.find((person: any) => person.displayName === confirmedPerson);
             if (likeOnline && !notifiedRef.current) {
@@ -54,7 +58,16 @@ const App = () => {
 
     const handleCookies = async () => {
         const res = await setLocCookies(cookies);
+        repeatRequest();
+        setCookies("");
     };
+
+    const handleConfirmName = () => {
+        setLikedPerson("");
+        setConfirmedPerson(likedPerson);
+        saveName(likedPerson);
+    }
+
     return (
         <div className="person-list">
             <div className="operate-box">
@@ -68,10 +81,7 @@ const App = () => {
                         }}
                     />
                     <button
-                        onClick={() => {
-                            setLikedPerson("");
-                            setConfirmedPerson(likedPerson);
-                        }}
+                        onClick={handleConfirmName}
                     >
                         确认
                     </button>
@@ -104,7 +114,7 @@ const App = () => {
                                 <div className="status-Description">{each.statusDescription}</div>
                             </div>
                         </div>
-                        <FriendLocation worldKey={each.location} />
+                        <FriendLocation worldKey={each.location} name={each.displayName} />
                     </div>
                 ))}
             </div>

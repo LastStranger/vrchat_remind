@@ -3,7 +3,7 @@ import request from "../../utils/Request";
 import "./index.scss";
 import notify from "../../utils/notification";
 
-const Index = ({ worldKey }: any) => {
+const Index = ({ worldKey, name }: any) => {
     const [locationData, setLocationData] = useState<any>(null);
     const ifLocation = useMemo(() => {
         return worldKey !== "offline" && worldKey !== "private" && worldKey !== "traveling";
@@ -13,8 +13,8 @@ const Index = ({ worldKey }: any) => {
         if (ifLocation) {
             request(`https://vrchat.com/api/1/worlds/${worldKey.split(":")[0]}`).then(res => {
                 setLocationData(res);
-                if (/(just H|Shangri-La)/.test(res.name)) {
-                    notify({ body: "有好友正在公开房开银趴" });
+                if (/just H|Shangri-La/.test(res.name)) {
+                    notify({ body: `好友${name}正在公开房开银趴` });
                 }
             });
         }
