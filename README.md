@@ -1,5 +1,5 @@
 # vrchat_remind
-vrchat关注好友上线提醒,支持mac系统,现在也支持window系统了，
+vrchat关注好友上线提醒,支持隐身查看好友列表情况, 主要支持mac系统,现在也支持window系统(版本会比mac低一些)了，
 ### 安装方法
 Windows下载旁边的release的msi文件，安装完成即可得到exe运行文件，双击运行即可, 如果没有通知信息,可以查看是否消息通知被禁用了。 
 mac下载安装即可食用。

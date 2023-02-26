@@ -6,6 +6,7 @@ import { setLocCookies } from "./utils/operateCookies";
 import "normalize.css";
 import notify from "./utils/notification";
 import { getNames, saveName } from "./utils/storeName";
+import { getWorldKey } from "./utils/tools";
 
 const App = () => {
     const [onlineUserList, setOnlineUserList] = useState<any>([]); // 在线用户列表
@@ -40,9 +41,7 @@ const App = () => {
     const handleRequest = async () => {
         try {
             const data = await request("https://vrchat.com/api/1/auth/user/friends?offline=false&n=50&offset=0");
-            console.log(data);
             setOnlineUserList(data);
-            console.log("%clikedPerson", "color: #22E1FF; font-size: 16px", confirmedPerson);
             const likeOnline = data.find((person: any) => person.displayName === confirmedPerson);
             if (likeOnline && !notifiedRef.current) {
                 await notify({
@@ -114,7 +113,7 @@ const App = () => {
                                 <div className="status-Description">{each.statusDescription}</div>
                             </div>
                         </div>
-                        <FriendLocation worldKey={each.location} name={each.displayName} />
+                        <FriendLocation worldKey={getWorldKey(each.location)} name={each.displayName} />
                     </div>
                 ))}
             </div>

@@ -2,30 +2,37 @@ import React, { useEffect, useMemo, useState } from "react";
 import request from "../../utils/Request";
 import "./index.scss";
 import notify from "../../utils/notification";
+import useSWR from 'swr';
+
 
 const Index = ({ worldKey, name }: any) => {
-    const [locationData, setLocationData] = useState<any>(null);
-    const ifLocation = useMemo(() => {
-        return worldKey !== "offline" && worldKey !== "private" && worldKey !== "traveling";
-    }, [worldKey]);
+    const { data, error, isLoading } = useSWR(`https://vrchat.com/api/1/worlds/${worldKey}`, requestLocation);
 
-    useEffect(() => {
-        if (ifLocation) {
-            request(`https://vrchat.com/api/1/worlds/${worldKey.split(":")[0]}`).then(res => {
-                setLocationData(res);
-                if (/just H|Shangri-La/.test(res.name)) {
-                    notify({ body: `好友${name}正在公开房开银趴` });
-                }
-            });
-        }
-    }, [worldKey]);
+    async function requestLocation (url:string):Promise<any> {
+        return new Promise(async (resolve, reject) => {
+            if(!worldKey){
+                reject("");
+                return;
+            }
+            const res = await request(url);
+            if (/just H|Shangri-La/.test(res.name)) {
+                notify({ body: `好友${name}正在公开房开银趴` });
+            }
+            resolve(res);
+        })
+    }
 
-    if (!ifLocation) return null;
+    if(isLoading){
+        return <div>loading...</div>
+    }
+    if(!data){
+        return null;
+    }
 
     return (
         <div className="friend-location">
-            <img className="location-pic" src={locationData?.imageUrl} alt="" />
-            <div className="location-name">{locationData?.name}</div>
+            <img className="location-pic" src={data?.imageUrl} alt="" />
+            <div className="location-name">{data?.name}</div>
         </div>
     );
 };
