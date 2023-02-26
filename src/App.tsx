@@ -24,7 +24,7 @@ const App = () => {
             handleRequest();
         }, 60000);
         // }, 10000)
-    }
+    };
 
     useEffect(() => {
         getNames().then(res => {
@@ -65,7 +65,7 @@ const App = () => {
         setLikedPerson("");
         setConfirmedPerson(likedPerson);
         saveName(likedPerson);
-    }
+    };
 
     return (
         <div className="person-list">
@@ -79,11 +79,7 @@ const App = () => {
                             setLikedPerson(e.target.value);
                         }}
                     />
-                    <button
-                        onClick={handleConfirmName}
-                    >
-                        确认
-                    </button>
+                    <button onClick={handleConfirmName}>确认</button>
                 </div>
                 <div className="name-box">
                     <input

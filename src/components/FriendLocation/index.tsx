@@ -3,6 +3,7 @@ import request from "../../utils/Request";
 import "./index.scss";
 import notify from "../../utils/notification";
 import useSWR from 'swr';
+import { motion } from "framer-motion";
 
 
 const Index = ({ worldKey, name }: any) => {
@@ -30,10 +31,10 @@ const Index = ({ worldKey, name }: any) => {
     }
 
     return (
-        <div className="friend-location">
+        <motion.div initial={{opacity: 0}} animate={{opacity: 1}} className="friend-location">
             <img className="location-pic" src={data?.imageUrl} alt="" />
             <div className="location-name">{data?.name}</div>
-        </div>
+        </motion.div>
     );
 };
 
