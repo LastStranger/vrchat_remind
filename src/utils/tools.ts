@@ -1,6 +1,9 @@
 const getWorldKey = (worldKey:string) => {
-    if(worldKey === "offline" || worldKey === "private" || worldKey === "traveling"){
+    if(worldKey === "offline" || worldKey === "traveling"){
         return "";
+    }
+    if(worldKey === "private"){
+        return  worldKey;
     }
     return worldKey.split(":")[0];
 }

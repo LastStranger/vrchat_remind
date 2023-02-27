@@ -7,6 +7,7 @@ import "normalize.css";
 import notify from "./utils/notification";
 import { getNames, saveName } from "./utils/storeName";
 import { getWorldKey } from "./utils/tools";
+import BioModal from "./components/BioModal";
 
 const App = () => {
     const [onlineUserList, setOnlineUserList] = useState<any>([]); // 在线用户列表
@@ -15,6 +16,7 @@ const App = () => {
     const [cookies, setCookies] = useState("");
     const timeRef = useRef<any>(null);
     const notifiedRef = useRef(false); // 如果通知过一次后不再通知
+    const bioRef = useRef<any>(null);
 
     const repeatRequest = async () => {
         clearInterval(timeRef.current);
@@ -67,6 +69,10 @@ const App = () => {
         saveName(likedPerson);
     };
 
+    const handleOpenModal = (bio:string) => {
+        bioRef.current?.open(bio);
+    }
+
     return (
         <div className="person-list">
             <div className="operate-box">
@@ -100,12 +106,14 @@ const App = () => {
                     <div key={each.id} className="person">
                         <div className="up-side">
                             <img
+                                loading="lazy"
                                 className="picture"
                                 src={each.profilePicOverride ? each.profilePicOverride : each.currentAvatarImageUrl}
                                 alt=""
                             />
                             <div className="right-side">
                                 <div className="name">{each.displayName}</div>
+                                {each.bio && <div className="bio" onClick={() => handleOpenModal(each.bio)}>bio</div>}
                                 <div className="status-Description">{each.statusDescription}</div>
                             </div>
                         </div>
@@ -113,6 +121,7 @@ const App = () => {
                     </div>
                 ))}
             </div>
+            <BioModal ref={bioRef} />
         </div>
     );
 };

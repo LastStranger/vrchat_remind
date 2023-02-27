@@ -1,0 +1,29 @@
+.bio-modal{
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .modal-content {
+    background-color: rgb(37, 42, 48);
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    max-width: 80%;
+    max-height: 90%;
+    overflow-y: auto;
+    text-align: center;
+    color: rgb(143, 143, 141);
+  }
+  .modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+}

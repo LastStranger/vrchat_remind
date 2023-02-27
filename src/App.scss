@@ -44,6 +44,12 @@
       justify-content: space-between;
       margin-left: 15px;
     }
+    .bio{
+      cursor: pointer;
+      &:hover{
+        text-decoration: underline;
+      }
+    }
     .name{
       color: #095d6a;
       font-weight: bold;
