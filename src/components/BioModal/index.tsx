@@ -23,23 +23,17 @@ const Index = React.forwardRef((props, ref) => {
     return (
         <AnimatePresence>
             {visible && (
-                <motion.div className="bio-modal" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                <motion.div  onClick={handleClose} className="bio-modal" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                     <motion.div
                         className="modal-content"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.3 }}
+                        onClick={(e) => {e.stopPropagation();}}
                     >
-                        {bio}
+                        <pre>{bio}</pre>
                     </motion.div>
-                    <motion.div
-                        className="modal-overlay"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 0.7 }}
-                        exit={{ opacity: 0 }}
-                        onClick={handleClose}
-                    />
                 </motion.div>
             )}
         </AnimatePresence>
