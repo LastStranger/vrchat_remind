@@ -69,8 +69,8 @@ const App = () => {
         saveName(likedPerson);
     };
 
-    const handleOpenModal = (bio:string) => {
-        bioRef.current?.open(bio);
+    const handleOpenModal = (bio:string ,e:MouseEvent) => {
+        bioRef.current?.open(bio, {x: e.clientX, y: e.clientY});
     }
 
     return (
@@ -113,7 +113,7 @@ const App = () => {
                             />
                             <div className="right-side">
                                 <div className="name">{each.displayName}</div>
-                                {each.bio && <div className="bio" onClick={() => handleOpenModal(each.bio)}>bio</div>}
+                                {each.bio && <div className="bio" onClick={(e) => handleOpenModal(each.bio, e)}>bio</div>}
                                 <div className="status-Description">{each.statusDescription}</div>
                             </div>
                         </div>
